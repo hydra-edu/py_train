@@ -1,8 +1,15 @@
 #!/usr/bin/python3
 
-##import standard libraries
+##import libraries
 import os
 import paramiko
+import warnings
+
+## excel data or csv data
+excel_list=[{"un":"bender","ip":"10.10.2.3"},{"un":"fry","ip":"10.10.2.4"},{"un":"zoidberg","ip":"10.10.2.5"}]
+
+## filter warnings
+warnings.filterwarnings(action="ignore", module=".*paramiko.*")
 
 ## We create an empty session:
 sshsession = paramiko.SSHClient()
@@ -13,11 +20,15 @@ key1 = paramiko.RSAKey.from_private_key_file("/home/student/.ssh/id_rsa")
 ## skips a new fingerprint warning:
 sshsession.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-## press the connect button in our putty session:
-sshsession.connect(hostname='10.10.2.3',username='bender',pkey=mykey)
+for fc in excel_list:
+	## press the connect button in our putty session:
+	sshsession.connect(hostname=fc['ip'], username=fc['un'], pkey=key1)
 
-## capture 3 responses from exec_command
-ssh_in, ssh_out, ssh_err = sshsession.exec_command('ls /var/')
+	## capture 3 responses from exec_command
+	ssh_in, ssh_out, ssh_err = sshsession.exec_command('ls /var/')
 
-## display the results of the command
-print(ssh_out.read().decode('utf-8'))
+	## display the results of the command
+	print(ssh_out.read().decode('utf-8'))
+
+	## ssh is not a barn
+	sshsession.close()
